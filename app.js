@@ -201,6 +201,58 @@ app.get("/logout", (req,res)=>{
     res.redirect("/login");
 })
 
+// Route to render 'My Profile' with user details
+app.get("/myprofile", isLoggedIn, async (req, res) => {
+    let user = await userModel.findOne({ email: req.user.email });
+    res.render("myprofile", { user });
+});
+
+// Route to render 'My Posts' with user's posts
+// Route to render 'My Posts' with user's posts
+app.get("/myposts", isLoggedIn, async (req, res) => {
+    let user = await userModel.findOne({ email: req.user.email }).populate("posts");
+    res.render("myposts", { user }); // Pass the user object to the template
+});
+
+
+// Route to render 'Settings' page for dark/light mode toggle
+app.get("/settings", isLoggedIn, (req, res) => {
+    res.render("settings", { theme: req.cookies.theme || "light" });
+});
+
+// Route to handle dark/light mode toggle in settings
+app.post("/settings", isLoggedIn, (req, res) => {
+    const { theme } = req.body;
+    res.cookie("theme", theme); // Store theme preference in cookies
+    res.redirect("/settings");
+});
+
+app.post("/updateprofile", isLoggedIn, async (req, res) => {
+    const { field, value } = req.body;
+    let user = await userModel.findOne({ email: req.user.email });
+
+    if (field === "name") {
+        user.name = value;
+    } else if (field === "age") {
+        user.age = value;
+    } else if (field === "password") {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(value, salt);
+    }
+
+    await user.save();
+    res.json({ success: true });
+});
+
+app.post("/uploadprofilepic", upload.single("image"), isLoggedIn, async (req, res) => {
+    let user = await userModel.findOne({ email: req.user.email });
+    user.profilepic = req.file.filename;
+    await user.save();
+    res.json({ success: true, filename: req.file.filename });
+});
+
+
+
 function isLoggedIn(req,res,next){
     if(req.cookies.token ==="")
         res.redirect("/login");

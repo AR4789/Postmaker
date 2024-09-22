@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .editable {
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .editable:hover {
+            color: #3b82f6; /* Change color on hover */
+        }
+
+        .profile-pic {
+            object-fit: cover;
+            transition: transform 0.2s;
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.1); /* Zoom effect on hover */
+        }
+
+        .edit-button {
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .edit-button:hover {
+            background-color: #3b82f6; /* Change background on hover */
+            transform: scale(1.05); /* Slight grow effect */
+        }
+
+        .container {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
+    <div class="container mx-auto p-10 rounded-lg">
+        <a href="/profile" class="text-blue-200 hover:underline mb-4 inline-block">
+            &larr; Back to Profile
+        </a>
+        <h1 class="text-5xl font-bold text-yellow-300 mb-6 text-center">My Profile</h1>
+        <div class="bg-zinc-800 p-6 rounded-lg shadow-lg ">
+            <!-- Profile Picture Section -->
+            <div class="mb-4 flex items-center justify-center">
+                <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-yellow-500 mb-2">
+                    <img class="profile-pic w-full h-full" src="/images/uploads/<%= user.profilepic %>" alt="Profile Picture" id="profile-pic">
+                </div>
+                <input type="file" id="profile-pic-input" class="block text-sm text-gray-500" />
+            </div>
+
+            <!-- Editable Fields Section -->
+            <div class="mb-4">
+                <p class="text-xl">
+                    <strong>Name:</strong>
+                    <span class="editable border border-zinc-500 rounded-md p-1 ml-10 w-1/2" id="editable-name"><%= user.name %></span>
+                </p>
+                <button class="edit-button text-white border border-yellow-500 rounded-md p-1" data-field="name">Edit</button>
+            </div>
+            <div class="mb-4">
+                <p class="text-xl"><strong>Username:</strong><span class="text-zinc-400 border rounded-md p-1 border-zinc-500 ml-2 w-1/2"> <%= user.username %></span></p>
+            </div>
+            <div class="mb-4">
+                <p class="text-xl"><strong>Email:</strong><span class="text-zinc-400 border rounded-md p-1 border-zinc-500 ml-12 w-1/2"> <%= user.email %></span></p>
+            </div>
+            <div class="mb-4">
+                <p class="text-xl">
+                    <strong>Password:</strong>
+                    <span class="editable border border-zinc-500 rounded-md p-1 ml-2 w-1/2" id="editable-password">********</span>
+                </p>
+                <button class="edit-button text-white border border-yellow-500 rounded-md p-1" data-field="password">Edit</button>
+            </div>
+            <div class="mb-4">
+                <p class="text-xl">
+                    <strong>Age:</strong>
+                    <span class="editable border border-zinc-500 rounded-md p-1 ml-14 " id="editable-age"></snap><%= user.age %>
+                </p>
+                <button class="edit-button text-white border border-yellow-500 rounded-md p-1 " data-field="age">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Script for Inline Editing -->
+    <script>
+        document.querySelectorAll('.edit-button').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const field = button.getAttribute('data-field');
+                const editableElement = document.getElementById(`editable-${field}`);
+                const currentText = editableElement.innerText;
+
+                // Create input field for editing
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentText;
+                input.className = 'bg-zinc-500 text-white border border-zinc-600 rounded-md p-2';
+
+                editableElement.replaceWith(input);
+                input.focus();
+
+                // Save new value on Enter key press
+                input.addEventListener('keydown', function (event) {
+                    if (event.key === 'Enter') {
+                        const newText = input.value;
+                        editableElement.innerText = newText;
+                        input.replaceWith(editableElement);
+                        updateField(field, newText); // Send AJAX request
+                    }
+                });
+
+                // Handle blur event (focus loss)
+                input.addEventListener('blur', function () {
+                    const newText = input.value;
+                    editableElement.innerText = newText;
+                    input.replaceWith(editableElement);
+                    updateField(field, newText); // Send AJAX request
+                });
+            });
+        });
+
+        // Update field with AJAX
+        function updateField(field, value) {
+            fetch(`/updateprofile`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ field, value })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log(`${field} updated successfully.`);
+                }
+            });
+        }
+
+        // Profile Picture Update
+        document.getElementById('profile-pic-input').addEventListener('change', function () {
+            const formData = new FormData();
+            formData.append('image', this.files[0]);
+
+            fetch('/uploadprofilepic', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('profile-pic').src = `/images/uploads/${data.filename}`;
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

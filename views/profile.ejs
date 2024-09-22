@@ -28,21 +28,26 @@
         .icon-white {
             color: #ffffff; /* White color */
         }
+        /* Rotate arrow when dropdown is active */
+        .dropdown:hover .fa-caret-down {
+            transform: rotate(180deg);
+        }
+
     </style>
 </head>
-<body class="bg-gradient-to-br from-zinc-900 via-gray-800 to-black text-white min-h-screen">
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
     <div class="container mx-auto p-10">
         <!-- Navbar with Logout and Profile Dropdown -->
         <div class="flex justify-end items-center gap-6 mb-8">
             <!-- Profile Dropdown -->
             <div class="relative dropdown">
-                <button class="bg-blue-500 hover:bg-blue-600 font-bold py-2 px-4 rounded-md inline-block shadow-lg transition duration-200">
+                <button class="bg-blue-500 hover:bg-blue-600 font-bold py-2 px-4 rounded-md inline-block shadow-lg transition duration-200 flex items-center gap-2">
                     My Profile
+                    <i class="fa-solid fa-caret-down transition-transform duration-200"></i> <!-- Arrow Icon -->
                 </button>
                 <div class="absolute right-0 mt-2 w-48 bg-zinc-800 text-white rounded-md shadow-lg dropdown-content">
                     <a href="/myprofile" class="block px-4 py-2 hover:bg-blue-600 rounded-t-md">My Profile</a>
                     <a href="/myposts" class="block px-4 py-2 hover:bg-blue-600">My Posts</a>
-                    <a href="/help" class="block px-4 py-2 hover:bg-blue-600">Help</a>
                     <a href="/settings" class="block px-4 py-2 hover:bg-blue-600 rounded-b-md">Settings</a>
                 </div>
             </div>
@@ -65,41 +70,41 @@
         <div class="create-post mb-10">
             <h3 class="text-xl text-gray-300 mb-5">Create a New Post</h3>
             <form action="/post" method="post">
-                <textarea class="p-4 w-full max-w-lg h-40 bg-transparent border-2 border-zinc-800 rounded-md resize-none text-white placeholder-zinc-500 focus:border-blue-500 outline-none mb-4" placeholder="What's on your mind?" name="content" required></textarea>
+                <textarea class="p-4 w-full max-w-lg h-40 bg-transparent border-2 border-zinc-600 bg-zinc-800  rounded-md resize-none text-white placeholder-zinc-500 focus:border-blue-500 outline-none mb-4" placeholder="What's on your mind?" name="content" required></textarea>
                 <!-- Create Post button placed directly below the textarea -->
-                <input type="submit" value="Create Post" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-3 shadow-lg transition duration-200 cursor-pointer">
+                <input type="submit" value="Create Post" class="bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-3 shadow-lg transition duration-200 cursor-pointer">
             </form>
         </div>
 
         <!-- User Posts Section -->
-        <div class="posts">
-            <h3 class="text-2xl text-gray-400 mb-5">Your Posts</h3>
-            <div class="postcontainer grid grid-cols-1 gap-6">
-                <% user.posts.reverse().forEach(function(post) { %>
-                    <div class="post w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
-                        <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
-                        <p class="text-base mb-4 text-gray-300 tracking-tight leading-snug"><%= post.content %></p>
-                        <small id="like-count" class="block text-sm text-gray-400 mb-2">Likes: <%= post.likes.length %></small>
-                        <div class="btns flex items-center gap-6 mt-4">
-                            <!-- Like Button with ID and Data Attribute -->
-                            <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
-                                <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-blue <% } else { %> icon-white <% } %>"></i>
-                            </a>
-                            <!-- Edit Button -->
-                            <a href="/edit/<%= post._id %>" class="text-zinc-600 hover:text-zinc-400 font-semibold flex items-center">
-                                <i class="fa-solid fa-pencil-alt mr-2"></i>
-                                Edit
-                            </a>
-                            <!-- Delete Button with Trash Icon -->
-                            <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
-                                <i class="fa-solid fa-trash-alt"></i>
-                            </a>                            
-                            </a>
-                        </div>
-                    </div>
-                <% }) %>
+  <!-- User Posts Section -->
+<div class="posts">
+    <h3 class="text-2xl text-gray-400 mb-5">Your Posts</h3>
+    <div class="postcontainer grid grid-cols-1 gap-6">
+        <% user.posts.reverse().slice(0, 3).forEach(function(post) { %>
+            <div class="post w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
+                <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
+                <p class="text-base mb-4 text-gray-300 tracking-tight leading-snug"><%= post.content %></p>
+                <small id="like-count" class="block text-sm text-gray-400 mb-2">Likes: <%= post.likes.length %></small>
+                <div class="btns flex items-center gap-6 mt-4">
+                    <!-- Like Button -->
+                    <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
+                        <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-blue <% } else { %> icon-white <% } %>"></i>
+                    </a>
+                    <!-- Edit Button -->
+                    <a href="/edit/<%= post._id %>" class="text-zinc-600 hover:text-zinc-400 font-semibold flex items-center">
+                        <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
+                    </a>
+                    <!-- Delete Button -->
+                    <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                        <i class="fa-solid fa-trash-alt"></i>
+                    </a>
+                </div>
             </div>
-        </div>
+        <% }) %>
+    </div>
+</div>
+
     </div>
     <!-- Include the external JavaScript file -->
     <script src="/javascripts/profile.js"></script>

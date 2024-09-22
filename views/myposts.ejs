@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Posts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" integrity="sha512-... (integrity value)" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .post:hover {
+            transform: translateY(-4px);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        /* Conditional icon color */
+        .icon-blue {
+            color: #3b82f6;
+        }
+
+        .icon-white {
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
+    <div class="container mx-auto p-10">
+        <a href="/profile" class="text-blue-200 hover:underline mb-4 inline-block">
+            &larr; Back to Profile
+        </a>
+        <!-- Page Title -->
+        <h1 class="text-3xl font-bold text-yellow-300 mb-6">My Posts</h1>
+
+        <!-- User Posts Section -->
+        <div class="posts">
+            <div class="postcontainer grid grid-cols-1 md:grid-cols-2 gap-6">
+                <% if (user.posts.length > 0) { %>
+                    <% user.posts.reverse().forEach(function(post) { %>
+                        <div class="post w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
+                            <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
+                            <p class="text-base mb-4 text-gray-300 tracking-tight leading-snug"><%= post.content %></p>
+                            
+                            <!-- Display Post Creation Date -->
+                            <small class="text-sm text-gray-400 mb-2 block">Posted on: <%= post.date ? post.date.toLocaleString() : 'Date not available' %></small>
+
+                            <!-- Like Count -->
+                            <small id="like-count" class="block text-sm text-gray-400 mb-2">Likes: <%= post.likes.length %></small>
+
+                            <!-- Buttons -->
+                            <div class="btns flex items-center gap-6 mt-4">
+                                <!-- Like Button -->
+                                <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
+                                    <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-blue <% } else { %> icon-white <% } %>"></i>
+                                </a>
+
+                                <!-- Edit Button -->
+                                <a href="/edit/<%= post._id %>" class="text-zinc-600 hover:text-zinc-400 font-semibold flex items-center">
+                                    <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
+                                </a>
+
+                                <!-- Delete Button -->
+                                <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                    <i class="fa-solid fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-lg text-gray-400">You haven't created any posts yet.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include external JavaScript files for handling likes and delete functionality -->
+    <script src="/javascripts/profile.js"></script>
+</body>
+
+</html>
