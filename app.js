@@ -5,15 +5,43 @@ const cookies = require("cookie-parser");
 const bcrypt=require("bcrypt")
 const jwt=require("jsonwebtoken")
 const postModel=require("./models/post")
+const upload=require("./config/multerconfig")
+const path=require("path");
+const session=require("express-session");
+const  flash=require("connect-flash"); 
+
 
 app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(cookies());
+app.use(express.static(path.join(__dirname,"public")));
+app.use(flash())
+app.use(session({ secret: 'secret', resave: true, saveUninitialized: true }));
+app.use((req, res, next) => {
+    res.locals.messages = req.flash();
+    next();
+});
+
+
 
 
 app.get("/", (req,res)=>{
-    res.render("index");
+    res.render("login");
+
+})
+
+app.get("/profile/upload", (req,res)=>{
+    res.render("profileupload");
+
+})
+
+
+app.post("/upload", upload.single("image"), isLoggedIn ,async (req,res)=>{
+    let user= await userModel.findOne({email:req.user.email})
+    user.profilepic=req.file.filename;
+    await user.save();
+    res.redirect("/profile");
 
 })
 
@@ -22,28 +50,70 @@ app.get("/login", (req,res)=>{
 
 })
 
+app.get("/register", (req,res)=>{
+  res.render("register");
+})
 app.get("/profile", isLoggedIn,async (req,res)=>{
     let user= await userModel.findOne({email:req.user.email}).populate("posts");
     res.render("profile", {user});
     
 })
 
-app.get("/like/:id", isLoggedIn,async (req,res)=>{
-    let post= await postModel.findOne({_id: req.params.id}).populate("user");
-
-    if(post.likes.indexOf(req.user.userid)=== -1)
-    {
-        post.likes.push(req.user.userid)
-
+app.post("/like/:id", isLoggedIn, async (req, res) => {
+    let post = await postModel.findOne({ _id: req.params.id }).populate("user");
+  
+    const index = post.likes.indexOf(req.user.userid);
+  
+    if (index === -1) {
+      post.likes.push(req.user.userid);
+    } 
+    else {
+      post.likes.splice(index, 1);
     }
-    else
-    post.likes.splice(post.likes.indexOf(req.user.userid),1);
+  
+    await post.save();
+  
+    res.json({ message: "Like updated successfully",  likes: post.likes.length });
+  });
+  
+  app.delete("/like/:id", isLoggedIn, async (req, res) => {
+    let post = await postModel.findOne({ _id: req.params.id }).populate("user");
+  
+    const index = post.likes.indexOf(req.user.userid);
+  
+    if (index !== -1) {
+      post.likes.splice(index, 1);
+    }
+  
+    await post.save();
+  
+    res.json({ message: "Like removed successfully", likes: post.likes.length });
+  });
 
-    await  post.save()
+  app.delete("/delete/:id", isLoggedIn, async (req, res) => {
+    try {
+        // Find the post by ID and delete it
+        const post = await postModel.findByIdAndDelete(req.params.id);
 
-    res.redirect("/profile");
-    
-})
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        // Find the user and remove the post ID from the user's posts array
+        const user = await userModel.findOne({ _id: req.user.userid });
+        const postIndex = user.posts.indexOf(req.params.id);
+
+        if (postIndex !== -1) {
+            user.posts.splice(postIndex, 1);
+            await user.save(); // Save the updated user
+        }
+
+        res.json({ message: "Post removed successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Server error while deleting post" });
+    }
+});
+
 
 
 
@@ -97,7 +167,10 @@ app.post("/register", async(req,res)=>{
         
         let token=jwt.sign({email:email, userid:user._id},"shhhh");
         res.cookie("token",token);
-        res.send("registered");
+     //   res.send("registered");
+     req.flash('success', 'User registered. Please login to continue.');
+
+        res.redirect("login");
     })
    })
 })

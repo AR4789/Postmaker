@@ -3,23 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login Your Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom gradients for background and button hover */
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #4f46e5 0%, #1e3a8a 100%);
+        }
+        .bg-gradient-btn {
+            background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
+        }
+        .bg-gradient-btn:hover {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+        .fade-out {
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
 
+        .fade-out.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+    </style>
 </head>
-<body>
-    <div class="w-full h-screen bg-zinc-900 text-white p-10">
-        <h1 class="text-3xl mb-5">Login your Account</h1>
-        <form action="/login" method="post">
-            <input class="rounded-md px-3 py-2 outline-none bg-transparent border-2 border-zinc-500" type="text" placeholder="email" name="email">
-            <input class="rounded-md px-3 py-2 outline-none bg-transparent border-2 border-zinc-500" type="password" placeholder="password" name="password">
-            <input type="submit" value="Login Account" class="bg-blue-500 rounded-md px-3 py-2 outline-none">
+<body class="bg-gradient-custom h-screen flex items-center justify-center">
+    <div class="w-full max-w-md bg-zinc-800 text-white p-10 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-8 text-center text-green-400">Login Your Account</h1>
+        <!-- Success Message Section (In your login page) -->
+        <% if (messages.success) { %>
+            <div class="bg-green-400 text-white text-center p-3 mb-5 fade-out">
+                <%= messages.success %>
+            </div>
+        <% } %>
+        
 
-
-
+        <form action="/login" method="post" class="space-y-5">
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200" 
+                   type="text" placeholder="Email" name="email" required>
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200" 
+                   type="password" placeholder="Password" name="password" required>
+            <input type="submit" value="Login Account" 
+                   class="w-full bg-gradient-btn text-white font-semibold rounded-lg px-4 py-3 cursor-pointer hover:bg-gradient-btn focus:outline-none transition duration-200">
+    <!-- Create New Account Section -->
+            <div class="text-center mt-4">
+                <h4 class="mb-0.6">Create New Account</h4>
+                <a href="/register" class="block text-blue-500 hover:underline">Register here</a>
+            </div>
         </form>
-
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageElement = document.querySelector('.fade-out');
+            if (messageElement) {
+                setTimeout(() => {
+                    messageElement.classList.add('hidden');
+                }, 5000); // 5000 ms = 5 seconds
+            }
+        });
+    </script>
     
 </body>
 </html>

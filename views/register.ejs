@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom gradients for background and button hover */
+        .bg-gradient-custom {
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+        }
+        .bg-gradient-btn {
+            background: linear-gradient(90deg, #FF8A00 0%, #FF3D00 100%);
+        }
+        .bg-gradient-btn:hover {
+            background: linear-gradient(90deg, #FF3D00 0%, #FF8A00 100%);
+        }
+    </style>
+</head>
+<body class="bg-gradient-custom h-screen flex items-center justify-center">
+    <div class="w-full max-w-md bg-zinc-800 text-white p-10 rounded-lg shadow-lg">
+        <h1 class="text-4xl font-bold mb-8 text-center text-yellow-400">Create Account</h1>
+        <form action="/register" method="post" class="space-y-5">
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
+            type="text" placeholder="Name" name="name" required>
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
+                   type="text" placeholder="Username" name="username" required>
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
+                   type="password" placeholder="Password" name="password" required>
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
+                   type="number" placeholder="Age" name="age" >
+            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
+                   type="text" placeholder="Email" name="email" required>
+            <input type="submit" value="Create Account" 
+                   class="w-full bg-gradient-btn text-white font-semibold rounded-lg px-4 py-3 cursor-pointer hover:bg-gradient-btn focus:outline-none transition duration-200">
+        </form>
+    </div>
+</body>
+</html>
