@@ -17,6 +17,8 @@ const multer = require('multer');
 const crypto=require("crypto");
 const axios = require('axios');
 const fs = require('fs');
+require('dotenv').config();
+
 
 
 
@@ -679,7 +681,7 @@ app.post('/api/chatgpt', async (req, res) => {
                 messages: [{ role: 'user', content: message }]
             }, {
                 headers: {
-                    'Authorization': `Bearer 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`, // Replace with your API key
+                    'Authorization': `Bearer ${process.env.SECRET_KEY}`, // Replace with your API key
                     'Content-Type': 'application/json'
                 }
             });
