@@ -17,98 +17,232 @@
         /* Dropdown visibility */
         .dropdown-content {
             display: none;
+            position: absolute;
+            z-index: 10; /* Increase the z-index to bring it on top of other elements */
         }
         .dropdown:hover .dropdown-content {
             display: block;
         }
         /* Conditional icon color */
-        .icon-blue {
-            color: #3b82f6; /* Tailwind blue-500 */
+        .icon-green {
+            color: #2bef25; /* Tailwind blue-500 */
         }
         .icon-white {
             color: #ffffff; /* White color */
+        }
+
+        .mycolour{
+            background-color: #1a1d1c;
         }
         /* Rotate arrow when dropdown is active */
         .dropdown:hover .fa-caret-down {
             transform: rotate(180deg);
         }
+        p {
+            word-break: break-all;
+            white-space: normal;
+        }
+        
+
+
+
+        .width-30 {
+            width: 30%;
+        }
+
+        .width-70 {
+            width: 70%;
+        }
 
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
-    <div class="container mx-auto p-10">
+<body class="bg-white text-black min-h-screen">
+    <div class="container mx-auto px-10 py-5">
         <!-- Navbar with Logout and Profile Dropdown -->
-        <div class="flex justify-end items-center gap-6 mb-8">
-            <!-- Profile Dropdown -->
-            <div class="relative dropdown">
-                <button class="bg-blue-500 hover:bg-blue-600 font-bold py-2 px-4 rounded-md inline-block shadow-lg transition duration-200 flex items-center gap-2">
-                    My Profile
-                    <i class="fa-solid fa-caret-down transition-transform duration-200"></i> <!-- Arrow Icon -->
-                </button>
-                <div class="absolute right-0 mt-2 w-48 bg-zinc-800 text-white rounded-md shadow-lg dropdown-content">
-                    <a href="/myprofile" class="block px-4 py-2 hover:bg-blue-600 rounded-t-md">My Profile</a>
-                    <a href="/myposts" class="block px-4 py-2 hover:bg-blue-600">My Posts</a>
-                    <a href="/settings" class="block px-4 py-2 hover:bg-blue-600 rounded-b-md">Settings</a>
+        <div class="flex justify-between items-center w-full mb-8">
+            <!-- Left Side (Hello, User) -->
+            <div class="flex items-center gap-4 w-1/2">
+                <div class="w-14 h-14 rounded-full overflow-hidden border-2 border-blue-500">
+                    <img class="profile-pic w-full h-full" src="data:image/png;base64,<%= user.profilepic %>" alt="Profile Picture">
+                </div>
+                <h1 class="text-3xl font-bold text-green-500">Hello, <span class="text-2xl"><%= user.name %> 👋</span></h1>
+            </div>
+            <a href="/create/post">
+            <figure>
+                <img src="/images/uploads/create-post.png" class="w-11 h-11 overflow-hidden" alt="Create Post">
+                <figcaption class="text-center font-bold"> Post </figcaption>
+            </figure> 
+           </a>
+
+            <!-- Right Side (Dropdown and Logout) -->
+            <div class="flex items-center justify-end gap-6 w-1/2">
+                   
+                <!-- Profile Dropdown -->
+                <div class="relative dropdown">
+                    <button class="bg-blue-600 hover:bg-blue-500 py-2 px-3 rounded-md inline-block shadow-lg transition duration-200 flex items-center gap-2 ">
+                        Account
+                        <i class="fa-solid fa-caret-down transition-transform duration-200"></i>
+                    </button>
+                    <div class="absolute right-0 mt-1 w-48 bg-black text-white rounded-md shadow-lg dropdown-content">
+                        <a href="/myprofile" class="block px-4 py-2 hover:bg-blue-600 rounded-t-md">My Profile</a>
+                        <a href="/myposts" class="block px-4 py-2 hover:bg-blue-600">My Posts</a>
+                        <a href="/friends" class="block px-4 py-2 hover:bg-blue-600">Friends</a>
+                        <a href="/logout" class="block hover:bg-red-700 px-4 py-2 rounded-b-md">Logout</a>
+                    </div>
+                </div>
+        
+                <!-- Logout Button -->
+                
+            </div>
+        </div>
+
+        <!-- Flex container for Posts and Friends -->
+        <div class="flex gap-6"> 
+            <div class="chat-container w-1/4 px-1 py-1">
+                <h2 class="text-3xl font-bold mb-5 text-center">Chat with AI</h2>
+                <div id="chat-window" class="border-2 border-black bg-black text-white rounded-md overflow-y-auto p-4 h-[450px]"></div>
+                <input type="text" id="user-input" class="border-2 border-black rounded-md w-full p-2 mt-2" placeholder="Type your message..." />
+                <button id="send-button" class="bg-blue-600 text-white p-2 rounded-md mt-2">Send</button>
+            </div>
+            <!-- Posts Section -->
+            <div class="w-1/2  rounded-lg shadow-lg "> 
+                <!-- User Posts Section -->
+                <div class="posts w-full h-full">
+                    <h1 class="text-3xl mb-5 text-center font-bold px-2">Your Feeds</h1>
+                    <div class="postcontainer w-full grid grid-cols-1 gap-6 h-full">
+                        <% posts.forEach(function(post) { %>
+                            <div class="post w-full bg-black rounded-lg p-6 shadow-lg transition-all duration-200 relative flex flex-col gap-2">
+                                <h4 class="text-blue-400 font-bold mb-3">@<%= post.user.username %></h4>
+
+                                <!-- Image Section -->
+                                <% if (post.image) { %>
+                                    <div class="h-[400px] mb-3 w-[400px] mx-auto border rounded-md border-zinc-400 mycolour">
+                                        <img src="data:image/png;base64,<%= post.image %>" alt="Post Image" class="h-full w-full rounded-lg">
+                                    </div>
+                                <% } %>
+                            
+                                <!-- Text Section -->
+                                <div class=" pl-2 h-full ">                              
+                                    <div class="max-h-[200px] overflow-y-auto border rounded-md border-zinc-400 p-2 mycolour">
+                                    <p class=" font-bold text-white tracking-tight leading-snug"><%= post.content %></p>
+                                    </div>
+                                    <small id="like-count" class="block text-sm text-green-400 mb-2 mt-2">Likes: <%= post.likes.length %></small>
+                                    
+                                    <div class="btns flex items-center gap-6 mt-4">
+                                        <!-- Like Button -->
+                                        <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
+                                            <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-green <% } else { %> icon-white <% } %>"></i>
+                                        </a>
+                                        <!-- Edit Button -->
+                                        <% if (post.user._id.toString() === user._id.toString()) { %>
+                                        <a href="/edit/<%= post._id %>" class="text-yellow-400 hover:text-yellow-500 font-semibold flex items-center">
+                                            <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
+                                        </a>
+                                        <!-- Delete Button -->
+                                        <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                            <i class="fa-solid fa-trash-alt"></i>
+                                        </a>
+                                        <% } %> 
+
+                                    </div>
+                                </div>
+                                   
+
+
+                            </div>
+                        <% }) %>
+                    </div>
                 </div>
             </div>
-            <!-- Logout Button -->
-            <a href="/logout" class="bg-red-600 hover:bg-red-700 font-bold py-2 px-6 rounded-md inline-block shadow-lg transition duration-200">
-                Logout
-            </a>
-        </div>
 
-        <!-- Profile Section -->
-        <div class="flex items-center gap-4 mb-8">
-            <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500">
-                <img class="profile-pic w-full h-full" src="/images/uploads/<%= user.profilepic %>" alt="Profile Picture">
-            </div>
-            <h1 class="text-4xl font-bold text-blue-400">Hello, <span class="font-light"><%= user.name %> 👋</span></h1>
-        </div>
-        <p class="text-lg mb-6">You can create a new post below.</p>
 
-        <!-- Post Creation Form -->
-        <div class="create-post mb-10">
-            <h3 class="text-xl text-gray-300 mb-5">Create a New Post</h3>
-            <form action="/post" method="post">
-                <textarea class="p-4 w-full max-w-lg h-40 bg-transparent border-2 border-zinc-600 bg-zinc-800  rounded-md resize-none text-white placeholder-zinc-500 focus:border-blue-500 outline-none mb-4" placeholder="What's on your mind?" name="content" required></textarea>
-                <!-- Create Post button placed directly below the textarea -->
-                <input type="submit" value="Create Post" class="bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-3 shadow-lg transition duration-200 cursor-pointer">
-            </form>
-        </div>
-
-        <!-- User Posts Section -->
-  <!-- User Posts Section -->
-<div class="posts">
-    <h3 class="text-2xl text-gray-400 mb-5">Your Posts</h3>
-    <div class="postcontainer grid grid-cols-1 gap-6">
-        <% user.posts.reverse().slice(0, 3).forEach(function(post) { %>
-            <div class="post w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
-                <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
-                <p class="text-base mb-4 text-gray-300 tracking-tight leading-snug"><%= post.content %></p>
-                <small id="like-count" class="block text-sm text-gray-400 mb-2">Likes: <%= post.likes.length %></small>
-                <div class="btns flex items-center gap-6 mt-4">
-                    <!-- Like Button -->
-                    <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
-                        <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-blue <% } else { %> icon-white <% } %>"></i>
-                    </a>
-                    <!-- Edit Button -->
-                    <a href="/edit/<%= post._id %>" class="text-zinc-600 hover:text-zinc-400 font-semibold flex items-center">
-                        <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
-                    </a>
-                    <!-- Delete Button -->
-                    <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
-                        <i class="fa-solid fa-trash-alt"></i>
-                    </a>
+            
+            <!-- Friends Section -->
+            <div class="w-1/4 rounded-lg shadow-lg px-5 py-5">
+                <h1 class="text-3xl text-center text-black font-bold">Friends</h1>
+                <div class="w-full h-full grid grid-cols-1 gap-6 mt-5 flex justify-center ">
+                    <% user.friends.forEach(function(friend) { %>
+                        <% const friendMessage = user.messages.find(msg => msg.friendId.toString() === friend._id.toString()); %>
+                        <div class="friend-card w-full h-[150px] bg-black rounded-lg p-6 shadow-lg transition-all duration-200 relative">
+                            <a href="/chat/<%= friend._id %>" class="block h-full w-full">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-500">
+                                        <img class="profile-pic w-full h-full" src="/images/uploads/<%= friend.profilepic %>" alt="Profile Picture">
+                                    </div>
+                                    <h2 class="text-blue-400 font-bold"><%= friend.name %></h2>
+                                </div>
+                                <% if (friendMessage) { %>
+                                    <div class="last-message text-gray-300">
+                                        <small><%= friendMessage.lastMessage %></small>
+                                        <span class="text-red-500 font-bold">(<%= friendMessage.unseenCount %>)</span>
+                                    </div>
+                                <% } %>
+                            </a>
+                            <div class="btns flex items-center gap-6 mt-4">
+                                <!-- Delete Button -->
+                                <a href="#" data-friend-id="<%= friend._id %>" class="delete-friend-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                    <i class="fa-solid fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    <% }) %>
                 </div>
             </div>
-        <% }) %>
-    </div>
-</div>
+            
 
-    </div>
-    <!-- Include the external JavaScript file -->
-    <script src="/javascripts/profile.js"></script>
- <!--  <script src="/javascripts/likes.js"></script>  -->
+    <!-- JavaScript for deleting a friend -->
+    <script>
+        // Delete friend button click event handler
+        document.querySelectorAll('.delete-friend-button').forEach(button => {
+            button.addEventListener('click', async event => {
+                event.preventDefault();
+                const friendId = button.getAttribute('data-friend-id');
+                try {
+                    const response = await fetch(`/delete-friend/${friendId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+                    if (response.ok) {
+                        // Remove the friend card from the DOM
+                        button.parentNode.parentNode.remove();
+                    } else {
+                        console.error('Failed to delete friend');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
+
+
+        document.getElementById('send-button').addEventListener('click', async () => {
+        const userInput = document.getElementById('user-input').value;
+        const chatWindow = document.getElementById('chat-window');
+
+        // Append user's message to the chat window
+        chatWindow.innerHTML += `<div>User: ${userInput}</div>`;
+        document.getElementById('user-input').value = ''; // Clear input field
+
+        // Send message to the backend
+        const response = await fetch('/api/chatgpt', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: userInput }),
+        });
+
+        const data = await response.json();
+        // Append ChatGPT's response to the chat window
+        chatWindow.innerHTML += `<div>ChatGPT: ${data.content}</div>`;
+        chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to the bottom
+    });
+    </script>
+        <script src="/javascripts/profile.js"></script>
+
+        
 
 </body>
 </html>

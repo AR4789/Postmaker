@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const isLiked = icon.classList.contains('icon-blue'); // Check if already liked
+            const isLiked = icon.classList.contains('icon-green'); // Check if already liked
 
             try {
                 const response = await fetch(`/like/${postId}`, {
@@ -31,11 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const data = await response.json(); // Parse response
                     // Update the icon's appearance based on the like/unlike status
                     if (isLiked) {
-                        icon.classList.remove('icon-blue');
+                        icon.classList.remove('icon-green');
                         icon.classList.add('icon-white');
                     } else {
                         icon.classList.remove('icon-white');
-                        icon.classList.add('icon-blue');
+                        icon.classList.add('icon-green');
                     }
                     console.log(data);
 

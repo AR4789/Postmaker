@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" integrity="sha512-... (integrity value)" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        .post:hover {
+            transform: translateY(-4px);
+            transition: transform 0.2s ease-in-out;
+        }
+        .profile-pic {
+            object-fit: cover;
+        }
+        /* Dropdown visibility */
+        .dropdown-content {
+            display: none;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        /* Conditional icon color */
+        .icon-blue {
+            color: #3b82f6; /* Tailwind blue-500 */
+        }
+        .icon-white {
+            color: #ffffff; /* White color */
+        }
+        /* Rotate arrow when dropdown is active */
+        .dropdown:hover .fa-caret-down {
+            transform: rotate(180deg);
+        }
+
+        .mybg{
+            background-color: rgb(219, 222, 225);
+        }
+
+    </style>
+</head>
+<body class="bg-white text-black min-h-screen">
+    <div class="container mx-auto py-5">
+        <a href="/profile" class="text-blue-600 hover:underline mb-4 font-bold p-2 inline-block ">
+            &larr; Back
+        </a>
+        <div class="flex flex-col lg:flex-row gap-10">
+
+           <!-- Search and Friend Requests Section -->
+            <div class="lg:w-3/5 w-full  rounded-lg shadow-lg px-5 py-5">
+                <!-- Search Section -->
+                <div class="mb-10 border-2 border-black rounded-md p-2 mybg">
+                    <h2 class="text-2xl font-bold mb-5">Search for Friends</h2>
+                    <form action="/search" method="GET" class="flex items-center">
+                        <input type="text" name="q" placeholder="Search by username" class="flex-1 bg-black text-white p-2 rounded mr-2">
+                        <button type="submit" class="bg-blue-600 text-white p-2 rounded">Search</button>
+                    </form>
+                
+                    <% if (searchQuery && users) { %>
+                        <ul class="mt-5 space-y-3">
+                            <% users.forEach(function(user) { %>
+                            <li class="flex justify-between items-center">
+                                <span><%= user.username %></span>
+                                <% if (user._id.toString() !== self && !user.friends.some(friend => friend._id.toString() === self)) { %>                                <form action="/friend-request/<%= user._id %>" method="POST">
+                                    <button type="submit" class="bg-green-500 text-white p-2 rounded">Send Request</button>
+                                </form>
+                                <% } %>
+                            </li>
+                            <% }) %>
+                        </ul>
+                        <% } else if (searchQuery) { %>
+                        <p class="mt-5">No users found matching your search query.</p>
+                        <% } %>
+                </div>
+
+                <!-- Friend Requests Section -->
+                <div class="border-2 border-black rounded-md p-2 mybg">
+                    <h2 class="text-2xl font-bold mb-5">Friend Requests</h2>
+                    <ul class="space-y-3">
+                        <% user.friendRequests.forEach(function(request) { %>
+                        <li class="flex justify-between items-center">
+                            <span><%= request.username %></span>
+                            <div class="flex gap-2">
+                                <form action="/accept-request/<%= request._id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="bg-green-500 text-white p-1 rounded">Accept</button>
+                                </form>
+                                <form action="/reject-request/<%= request._id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="bg-red-500 text-white p-1 rounded">Reject</button>
+                                </form>
+                            </div>
+                        </li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+
+    
+
+<!-- Friends List Section -->
+<div class="lg:w-2/5 w-full h-full rounded-lg shadow-lg px-5 py-5 mybg">
+    <h2 class="text-2xl font-bold mb-5 text-center">Friends</h2>
+
+    <ul class="space-y-3">
+        <% user.friends.forEach(function(friend) { %>
+        <li class="flex grid grid-cols-6 border border-black h-[80px] p-2 rounded-md">
+            <div>
+            <img class="rounded w-14 h-14" src="/images/uploads/<%= friend.profilepic %>" />
+            </div>
+            <!-- Friend name and username on the left side -->
+            <div>
+                <h3 class="text-lg font-semibold"><%= friend.name %></h3>
+                <span class="text-gray-300">@<%= friend.username %></span>
+            </div>
+
+
+            <div>
+                
+            </div>
+
+            <div>
+                
+            </div>
+            
+            <div>
+                <a href="#">Chat</a>
+            </div>
+
+            <!-- Delete button on the right side -->
+            <div class="flex justify-end ">
+                <a href="#" data-friend-id="<%= friend._id %>" class="delete-friend-button text-red-500 hover:text-red-300 font-semibold">
+                    <i class="fa-solid fa-trash-alt"></i>
+                </a>
+            </div>
+        </li>
+        <% }) %>
+    </ul>
+</div>
+
+    
+
+
+        </div>
+    </div>
+    <script src="/javascripts/friend.js"></script>
+</body>
+</html>

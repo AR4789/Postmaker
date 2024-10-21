@@ -14,56 +14,74 @@
         }
 
         /* Conditional icon color */
-        .icon-blue {
-            color: #3b82f6;
+        .icon-green {
+            color: #2bef25;
         }
 
         .icon-white {
             color: #ffffff;
         }
+
+        p {
+            word-break: break-all;
+            white-space: normal;
+        }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
+<body class="bg-white text-black min-h-screen">
     <div class="container mx-auto p-10">
-        <a href="/profile" class="text-blue-200 hover:underline mb-4 inline-block">
-            &larr; Back to Profile
+        <a href="/profile" class="text-blue-600 font-bold hover:underline mb-4 inline-block">
+            &larr; Back
         </a>
         <!-- Page Title -->
-        <h1 class="text-3xl font-bold text-yellow-300 mb-6">My Posts</h1>
+        <h1 class="text-3xl font-bold text-black mb-8 text-center">My Posts</h1>
 
         <!-- User Posts Section -->
-        <div class="posts">
-            <div class="postcontainer grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="posts h-full flex justify-center items-center">
+
+            <div class="postcontainer grid grid-cols-2 gap-20">
                 <% if (user.posts.length > 0) { %>
                     <% user.posts.reverse().forEach(function(post) { %>
-                        <div class="post w-full max-w-lg bg-zinc-800 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
+                        <div class="post w-[600px]  bg-black border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
                             <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
-                            <p class="text-base mb-4 text-gray-300 tracking-tight leading-snug"><%= post.content %></p>
-                            
-                            <!-- Display Post Creation Date -->
-                            <small class="text-sm text-gray-400 mb-2 block">Posted on: <%= post.date ? post.date.toLocaleString() : 'Date not available' %></small>
 
-                            <!-- Like Count -->
-                            <small id="like-count" class="block text-sm text-gray-400 mb-2">Likes: <%= post.likes.length %></small>
+                            <% if (post.image) { %>
+                                <div class="h-[400px] mb-3 w-[400px] mx-auto border rounded-md border-zinc-400 mycolour">
+                                    <img src="data:image/png;base64,<%= post.image %>" alt="Post Image" class="h-full w-full rounded-lg">
+                                </div>
+                            <% } %>
 
-                            <!-- Buttons -->
-                            <div class="btns flex items-center gap-6 mt-4">
-                                <!-- Like Button -->
-                                <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
-                                    <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-blue <% } else { %> icon-white <% } %>"></i>
-                                </a>
 
-                                <!-- Edit Button -->
-                                <a href="/edit/<%= post._id %>" class="text-zinc-600 hover:text-zinc-400 font-semibold flex items-center">
-                                    <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
-                                </a>
+                            <div class=" pl-2 h-full ">                              
+                                <div class="h-[200px] overflow-y-auto border rounded-md border-zinc-400 p-2 mycolour">
+                                <p class=" font-bold text-white tracking-tight leading-snug"><%= post.content %></p>
+                                </div>                            
+                                <!-- Display Post Creation Date -->
+                                <small class="text-sm text-gray-300 mb-2 block">Posted on: <%= post.date ? post.date.toLocaleString() : 'Date not available' %></small>
 
-                                <!-- Delete Button -->
-                                <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
-                                    <i class="fa-solid fa-trash-alt"></i>
-                                </a>
+                                <!-- Like Count -->
+                                <small id="like-count" class="block text-sm text-green-400 mb-2">Likes: <%= post.likes.length %></small>
+
+                                <!-- Buttons -->
+                                <div class="btns flex items-center gap-6 mt-4">
+                                    <!-- Like Button -->
+                                    <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
+                                        <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-green <% } else { %> icon-white <% } %>"></i>
+                                    </a>
+
+                                    <!-- Edit Button -->
+                                    <a href="/edit/<%= post._id %>" class="text-yellow-400 hover:text-yellow-500 font-semibold flex items-center">
+                                        <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
+                                    </a>
+
+                                    <!-- Delete Button -->
+                                    <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                        <i class="fa-solid fa-trash-alt"></i>
+                                    </a>
+                                </div>
                             </div>
+
                         </div>
                     <% }) %>
                 <% } else { %>

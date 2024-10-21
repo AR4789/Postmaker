@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Your Account</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom gradients for background and button hover */
-        .bg-gradient-custom {
-            background: linear-gradient(135deg, #4f46e5 0%, #1e3a8a 100%);
-        }
         .bg-gradient-btn {
             background: linear-gradient(90deg, #34d399 0%, #10b981 100%);
         }
+
         .bg-gradient-btn:hover {
             background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
         }
+
         .fade-out {
             opacity: 1;
             transition: opacity 1s ease-in-out;
@@ -25,43 +24,99 @@
             opacity: 0;
             visibility: hidden;
         }
+
+        .icon-blue {
+            color: #3b82f6;
+        }
+
+        .icon-white {
+            color: #ffffff;
+        }
+
+        /* Scrollbar for Trending Posts */
+        .trending-posts {
+            max-height: 85vh; /* Set a max height */
+            overflow-y: auto; /* Allow scrolling if content overflows */
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
-    <div class="w-full max-w-md bg-zinc-800 text-white p-10 rounded-lg shadow-lg">
-        <h1 class="text-4xl font-bold mb-8 text-center text-green-400">Login Your Account</h1>
-        <!-- Success Message Section (In your login page) -->
-        <% if (messages.success) { %>
-            <div class="bg-green-400 text-white text-center p-3 mb-5 fade-out">
-                <%= messages.success %>
-            </div>
-        <% } %>
-        
 
-        <form action="/login" method="post" class="space-y-5">
-            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200" 
-                   type="text" placeholder="Email" name="email" required>
-            <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200" 
-                   type="password" placeholder="Password" name="password" required>
-            <input type="submit" value="Login Account" 
-                   class="w-full bg-gradient-btn text-white font-semibold rounded-lg px-4 py-3 cursor-pointer hover:bg-gradient-btn focus:outline-none transition duration-200">
-    <!-- Create New Account Section -->
-            <div class="text-center mt-4">
-                <h4 class="mb-0.6">Create New Account</h4>
-                <a href="/register" class="block text-blue-500 hover:underline">Register here</a>
+<body class="bg-white h-full flex items-center justify-center">
+
+    <div class="flex w-full max-w-6xl bg-white text-black px-5 py-10 rounded-lg shadow-lg gap-20">
+
+        <!-- Trending Posts Section -->
+        <div class="w-3/5 pr-10 border border-zinc-600 rounded-lg shadow-lg trending-posts">
+            <h2 class="text-4xl font-bold mb-10 text-center text-green-400 mt-5">Image</h2>
+        </div>
+
+        <!-- Login Form Section -->
+        <div class="w-2/5 flex items-center justify-center flex-col mt-20">
+            <div class="w-full border border-black rounded-lg shadow-lg p-5">
+                <h1 class="text-4xl font-bold mb-8 text-center text-green-500">Login Your Account</h1>
+                <% if (messages.success) { %>
+                    <div class="bg-green-500 text-white text-center p-3 mb-5 fade-out rounded-md">
+                        <%= messages.success %>
+                    </div>
+                <% } %>
+                <% if (messages.error) { %>
+                    <div class="bg-red-500 text-white text-center p-1 mb-5 fade-out rounded md">
+                        <%= messages.error %>
+                    </div>
+                <% } %>
+                <form id="loginForm" action="/login" method="post" class="space-y-5">
+                    <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-black placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200"
+                        type="text" placeholder="Email" name="email" required>
+                    <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-black placeholder-gray-400 focus:border-green-500 focus:outline-none transition duration-200"
+                        type="password" placeholder="Password" name="password" required>
+                    <input type="submit" value="Login Account"
+                        class="w-full bg-gradient-btn text-white font-semibold rounded-lg px-4 py-3 cursor-pointer hover:bg-gradient-btn focus:outline-none transition duration-200">
+                    <div class="text-center mt-4">
+                        <h4 class="mb-0.6">Create New Account</h4>
+                        <a href="/register" class="block text-blue-500 hover:underline">Register here</a>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+
     </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const messageElement = document.querySelector('.fade-out');
-            if (messageElement) {
-                setTimeout(() => {
-                    messageElement.classList.add('hidden');
-                }, 5000); // 5000 ms = 5 seconds
-            }
-        });
-    </script>
+      document.addEventListener('DOMContentLoaded', function () {
+    const loginForm = document.getElementById('loginForm');
+
     
+
+    // Detect login from another tab and update session
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'login-event') {
+            location.reload(); // Reload to update the session from storage
+        }
+    });
+
+    // Existing fade-out logic for success messages
+    const messageElement = document.querySelector('.fade-out');
+    if (messageElement) {
+        setTimeout(() => {
+            messageElement.classList.add('hidden');
+        }, 5000); // 5000 ms = 5 seconds
+    }
+
+    // Send the Authorization header with the token when making requests to protected routes
+    const token = sessionStorage.getItem('token');
+    if (token) {
+        fetch('/profile', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    }
+});
+    </script>
 </body>
+
 </html>

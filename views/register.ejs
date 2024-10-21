@@ -16,11 +16,30 @@
         .bg-gradient-btn:hover {
             background: linear-gradient(90deg, #FF3D00 0%, #FF8A00 100%);
         }
+        .fade-out {
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .fade-out.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
+<body class="bg-gradient-custom h-screen flex items-center justify-center">
     <div class="w-full max-w-md bg-zinc-800 text-white p-10 rounded-lg shadow-lg">
         <h1 class="text-4xl font-bold mb-8 text-center text-yellow-400">Create Account</h1>
+        <% if (messages.success) { %>
+            <div class="bg-green-500 text-white text-center p-3 mb-5 fade-out rounded-md">
+                <%= messages.success %>
+            </div>
+        <% } %>
+        <% if (messages.error) { %>
+            <div class="bg-red-500 text-white text-center p-1 mb-5 fade-out rounded md">
+                <%= messages.error %>
+            </div>
+        <% } %>
         <form action="/register" method="post" class="space-y-5">
             <input class="w-full rounded-lg px-4 py-3 bg-transparent border-2 border-zinc-500 placeholder-gray-400 focus:border-yellow-500 focus:outline-none transition duration-200" 
             type="text" placeholder="Name" name="name" required>
@@ -34,7 +53,20 @@
                    type="text" placeholder="Email" name="email" required>
             <input type="submit" value="Create Account" 
                    class="w-full bg-gradient-btn text-white font-semibold rounded-lg px-4 py-3 cursor-pointer hover:bg-gradient-btn focus:outline-none transition duration-200">
+                 
         </form>
+        <a href="/" class="text-blue-200 hover:underline mt-4 inline-block ">
+            &larr; Back to Login 
+        </a>
     </div>
+
+    <script>
+           const messageElement = document.querySelector('.fade-out');
+    if (messageElement) {
+        setTimeout(() => {
+            messageElement.classList.add('hidden');
+        }, 5000); // 5000 ms = 5 seconds
+    }
+    </script>
 </body>
 </html>

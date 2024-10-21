@@ -1,0 +1,101 @@
+<!-- chat.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with <%= user.name %></title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" integrity="sha512-... (integrity value)" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            overflow: hidden; /* Prevent scrolling */
+        }
+        .chat-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .chat-header {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            text-align: center;
+        }
+        .chat-box {
+            flex: 1;
+            overflow-y: auto; /* Allow vertical scrolling for messages */
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .message-form {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen">
+    <div class="chat-container">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <h1 class="text-2xl font-bold text-white">Chat with <%= friend.name  %> </h1>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="chat-box">
+            <% messages.forEach(function(message) { %>
+                <div class="message mb-2">
+                    <strong><%= message.sender.name %>:</strong> <span><%= message.content %></span>
+                </div>
+            <% }) %>
+        </div>
+
+        <!-- Message Form -->
+        <form class="message-form">
+            <input type="text" name="message" class="flex-1 p-2 rounded-md bg-zinc-800 border-2 border-zinc-600 placeholder-zinc-500 text-white" placeholder="Type your message..." required>
+            <input type="hidden" name="friendId" value="<%= friend._id %>">
+            <input type="submit" value="Send" class="bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-4 py-2">
+        </form>
+    </div>
+    <script>
+// Client-side code
+const socket = io('http://localhost:3000', {
+  query: {
+    friendId: '<%= friend._id %>' // Replace with the actual friendId
+  }
+});
+
+
+        // Handle incoming messages
+        socket.on('message', (message) => {
+            console.log('Received message');
+            const chatBox = document.querySelector('.chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', 'mb-2');
+            messageElement.innerHTML = `<strong>${message.sender}:</strong> <span>${message.content}</span>`;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom of the chat box
+        });
+
+        // Send a message to the server
+        document.querySelector('.message-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const message = document.querySelector('input[name="message"]').value;
+            const friendId = document.querySelector('input[name="friendId"]').value;
+            const userId = '<%= user._id %>'; // Get the user's ID from the server-side code
+            const userName = '<%= user.name %>'; // Get the user's name from the server-side code
+            const roomId = [friendId, userId].sort().join('-');
+            socket.emit('join', roomId); // Join the room
+            socket.emit('message', { message, sender: userName, room: roomId });
+            document.querySelector('input[name="message"]').value = ''; // Clear the input field
+        });
+    </script>
+</body>
+</html>
