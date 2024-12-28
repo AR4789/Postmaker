@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,30 +8,60 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Font Awesome -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+
     <style>
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background: #4b5563;
+            /* Tailwind gray-700 */
+            border-radius: 8px;
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            /* Tailwind blue-500 */
+            border-radius: 8px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+            /* Tailwind blue-600 */
+        }
+
         .post:hover {
             transform: translateY(-4px);
             transition: transform 0.2s ease-in-out;
         }
+
         .profile-pic {
             object-fit: cover;
         }
+
         .dropdown-content {
             display: none;
         }
+
         .dropdown:hover .dropdown-content {
             display: block;
         }
+
         .icon-blue {
-            color: #3b82f6; /* Tailwind blue-500 */
+            color: #3b82f6;
+            /* Tailwind blue-500 */
         }
+
         .icon-white {
-            color: #ffffff; /* White color */
+            color: #ffffff;
+            /* White color */
         }
+
         .dropdown:hover .fa-caret-down {
             transform: rotate(180deg);
         }
@@ -42,58 +73,178 @@
             margin-top: 10px;
             border-radius: 8px;
         }
-    </style>
-</head>
-<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white min-h-screen flex justify-center">
-    <!-- Post Creation Form -->
-    <div class="create-post m-10 h-2/3 border border-purple-500 w-full flex flex-col items-center justify-center max-w-3xl p-6 bg-zinc-800 rounded-lg">
-        <h3 class="text-2xl text-gray-300 mb-5">Create a New Post</h3>
-        <form action="/post" method="post" class="flex flex-row w-full items-center" enctype="multipart/form-data">
-            <!-- Image Upload Area -->
-            <div class="w-1/3 flex flex-col ">
-                <label class="block mb-2 ">Upload Image:</label>
-                <input type="file" name="image" accept="image/*" class="block w-full text-sm text-white
-                    file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-500 file:text-white
-                    hover:file:bg-blue-700" id="image-upload" >
-                <p class="text-sm text-gray-400 mt-1">Max size: 5MB</p>
-                <!-- Image Preview -->
-                <img id="image-preview" alt="Image Preview">
-            </div>
 
-            <!-- Text Area for Post -->
-            <div class="w-2/3 ml-4">
-                <textarea class="p-4 w-full h-60 bg-transparent border-2 border-zinc-600 rounded-md resize-none text-white placeholder-zinc-500 focus:border-blue-500 outline-none mb-4"
-                    placeholder="What's on your mind?" name="content" required></textarea>
-                <input type="submit" value="Create Post" class="bg-blue-800 hover:bg-blue-700 text-white font-semibold rounded-md px-5 py-3 shadow-lg transition duration-200 cursor-pointer w-full">
-            </div>
-        </form>
-    </div>
 
-    <!-- Include JavaScript -->
-    <script src="/javascripts/profile.js"></script>
+        .bokeh {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, #3b89f6, #4aa1f3, #3b82f6);
+            background-size: 100% 300px;
+            background-position: 0% 100%;
+        }
 
-    <!-- JavaScript to limit image size and preview -->
-    <script>
-        document.getElementById('image-upload').addEventListener('change', function() {
-            const file = this.files[0];
-            const preview = document.getElementById('image-preview');
+        .bokeh-circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #ffffff;
+            opacity: 0.2;
+            animation: bokehAnimation 10s infinite;
+        }
 
-            if (file.size > 5 * 1024 * 1024) { // 5 MB limit
-                alert("Image size should not exceed 5MB.");
-                this.value = ""; // Clear the input
-                preview.style.display = 'none'; // Hide preview
-                return;
+        .bokeh-circle-1 {
+            top: 20%;
+            left: 30%;
+            width: 100px;
+            height: 100px;
+        }
+
+        .bokeh-circle-2 {
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            height: 150px;
+        }
+
+        .bokeh-circle-3 {
+            top: 70%;
+            left: 20%;
+            width: 200px;
+            height: 200px;
+        }
+
+        .bokeh-circle-4 {
+            top: 10%;
+            left: 70%;
+            width: 125px;
+            height: 125px;
+        }
+
+        @keyframes bokehAnimation {
+            0% {
+                transform: scale(1);
             }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block'; // Show preview
-            };
-            reader.readAsDataURL(file);
-        });
-    </script>
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-blue-500 text-black min-h-screen flex items-center justify-center px-4">
+    <div class="bokeh">
+        <div class="bokeh-circle bokeh-circle-1"></div>
+        <div class="bokeh-circle bokeh-circle-2"></div>
+        <div class="bokeh-circle bokeh-circle-3"></div>
+        <div class="bokeh-circle bokeh-circle-4"></div>
+
+        <!-- Flex Container for Centering -->
+        <div class="flex items-center justify-center min-h-screen">
+            <!-- Post Creation Form -->
+            <div class="create-post m-4 md:m-10 w-full flex flex-col items-center justify-center max-w-4xl p-6 bg-blue-300 rounded-lg shadow-lg">
+                <form action="/post" method="post" class="w-full" enctype="multipart/form-data">
+                    <!-- Image Upload Area -->
+                    <div class="flex flex-col lg:flex-row gap-6">
+
+                        <!-- Image Upload -->
+                        <div class="w-full lg:w-1/3 flex flex-col gap-2">
+                            <h3 class="text-xl md:text-2xl mb-5 font-bold text-center">Upload image</h3>
+
+                            <input type="file" name="image" accept="image/*" class="block w-full text-sm 
+                            file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-600 file:text-white
+                            hover:file:bg-blue-500" id="image-upload">
+                            <p class="text-sm ">Max size: 5MB</p>
+                            <!-- Image Preview -->
+                            <img id="image-preview" alt="Image Preview">
+                        </div>
+
+                        <div class="hidden lg:block w-px bg-zinc-500"></div>
+
+
+                        <!-- Text Area for Post -->
+                        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+                            <h3 class="text-xl md:text-2xl mb-5 font-bold text-center">Create a New Post</h3>
+
+                            <textarea id="header-input"
+                                class="p-2 w-full bg-transparent border-2 border-zinc-600 rounded-md resize-none placeholder-zinc-500 focus:border-blue-500 outline-none text-sm md:text-base"
+                                placeholder="What's on your mind?" name="header" required maxlength="300"></textarea>
+                                <p id="header-feedback" class="text-red-500 text-sm hidden">Word limit exceeded! Maximum 300 character allowed.</p>
+
+                            <textarea id="content-input"
+                                class="p-2 w-full h-40 md:h-60 bg-transparent border-2 border-zinc-600 rounded-md resize-none placeholder-zinc-500 focus:border-blue-500 outline-none text-sm md:text-base"
+                                placeholder="Description" name="content" required maxlength="1000"></textarea>
+                                <p id="content-feedback" class="text-red-500 text-sm hidden">Word limit exceeded! Maximum 1000 characters allowed.</p>
+
+                            <input type="submit" value="Create Post"
+                                class="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-md px-5 py-3 shadow-lg transition duration-200 cursor-pointer w-full">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+      <!-- Include JavaScript -->
+      <script src="/javascripts/profile.js"></script>
+
+      <!-- JavaScript to limit image size and preview -->
+      <script>
+          document.getElementById('image-upload').addEventListener('change', function () {
+              const file = this.files[0];
+              const preview = document.getElementById('image-preview');
+  
+              if (file.size > 5 * 1024 * 1024) { // 5 MB limit
+                  alert("Image size should not exceed 5MB.");
+                  this.value = ""; // Clear the input
+                  preview.style.display = 'none'; // Hide preview
+                  return;
+              }
+  
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  preview.src = e.target.result;
+                  preview.style.display = 'block'; // Show preview
+              };
+              reader.readAsDataURL(file);
+          });
+  
+   // Word limit enforcement
+// Word limit enforcement
+function enforceWordLimit(inputId, feedbackId, maxChars) {
+    const input = document.getElementById(inputId);
+    const feedback = document.getElementById(feedbackId);
+
+    input.addEventListener('input', () => {
+        const chars = input.value.length;
+
+        if (chars >= maxChars) {
+            feedback.classList.remove('hidden'); // Show feedback
+            // Trim to max characters
+            input.value = input.value.slice(0, maxChars); // Correctly slice the string
+            // Prevent further input
+            input.setCustomValidity(`Maximum ${maxChars} characters allowed.`);
+        } else {
+            feedback.classList.add('hidden'); // Hide feedback
+            input.setCustomValidity(''); // Clear custom validity
+        }
+    });
+}
+
+// Apply word limit to header and content inputs
+enforceWordLimit('header-input', 'header-feedback', 300); // 300 character limit for header
+enforceWordLimit('content-input', 'content-feedback', 1000); 
+
+      </script>
 </body>
+
+
 </html>

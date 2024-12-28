@@ -20,3 +20,6 @@ document.querySelectorAll('.delete-friend-button').forEach(button => {
         }
     });
 });
+
+
+

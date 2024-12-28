@@ -34,7 +34,11 @@
         }
 
         .mybg{
-            background-color: rgb(219, 222, 225);
+            background-color: rgb(229, 238, 248);
+        }
+
+        .listbg{
+            background-color: rgb(152, 187, 227);
         }
 
     </style>
@@ -59,14 +63,14 @@
                     <% if (searchQuery && users) { %>
                         <ul class="mt-5 space-y-3">
                             <% users.forEach(function(user) { %>
-                            <li class="flex justify-between items-center">
-                                <span><%= user.username %></span>
-                                <% if (user._id.toString() !== self && !user.friends.some(friend => friend._id.toString() === self)) { %>                                <form action="/friend-request/<%= user._id %>" method="POST">
-                                    <button type="submit" class="bg-green-500 text-white p-2 rounded">Send Request</button>
-                                </form>
-                                <% } %>
-                            </li>
-                            <% }) %>
+                                <li class="flex justify-between items-center border-2 border-black p-2 rounded-md mb-2 listbg">
+                                    <span class="font-bold text-lg"><%= user.username %></span>
+                                    <% if (user._id.toString() !== self && !user.friends.some(friend => friend._id.toString() === self)) { %>
+                                        <button id="friendRequestBtn-<%= user._id %>" onclick="sendFriendRequest('<%= user._id %>')" class="bg-green-500 text-white p-2 rounded" data-id="<%= user._id %>">Send Request</button>
+                                        <span id="friendRequestMsg-<%= user._id %>" class="hidden text-green-400 font-bold">Friend request sent</span>
+                                    <% } %>
+                                </li>
+                            <% }) %>                                               
                         </ul>
                         <% } else if (searchQuery) { %>
                         <p class="mt-5">No users found matching your search query.</p>
@@ -78,7 +82,7 @@
                     <h2 class="text-2xl font-bold mb-5">Friend Requests</h2>
                     <ul class="space-y-3">
                         <% user.friendRequests.forEach(function(request) { %>
-                        <li class="flex justify-between items-center">
+                        <li class="flex justify-between items-center border-2 border-black p-2 rounded-md mb-2 listbg">
                             <span><%= request.username %></span>
                             <div class="flex gap-2">
                                 <form action="/accept-request/<%= request._id %>" method="POST" style="display:inline;">
@@ -102,9 +106,9 @@
 
     <ul class="space-y-3">
         <% user.friends.forEach(function(friend) { %>
-        <li class="flex grid grid-cols-6 border border-black h-[80px] p-2 rounded-md">
+        <li class="flex grid grid-cols-6 h-[80px] rounded-md border-2 border-black p-2 rounded-md mb-2 listbg">
             <div>
-            <img class="rounded w-14 h-14" src="/images/uploads/<%= friend.profilepic %>" />
+            <img class="rounded w-14 h-14" src="data:image/png;base64,<%= friend.profilepic %>" />
             </div>
             <!-- Friend name and username on the left side -->
             <div>
@@ -141,6 +145,41 @@
 
         </div>
     </div>
+
+
+    <script>
+        async function sendFriendRequest(userId) {
+            const button = document.getElementById(`friendRequestBtn-${userId}`);
+            const message = document.getElementById(`friendRequestMsg-${userId}`);
+            
+            try {
+                const response = await fetch(`/friend-request/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}),
+                });
+        
+                if (response.ok) {
+                    button.style.display = 'none';  // Hide the button
+                    message.classList.remove('hidden');  // Show the "Friend request sent" message
+                } else if (response.status === 400) {
+                    const result = await response.json();
+                    alert(result.message);
+                } else {
+                    alert('Error occurred while sending friend request.');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Failed to send friend request.');
+            }
+        }
+        </script>
+        
+        
+
+
     <script src="/javascripts/friend.js"></script>
 </body>
 </html>

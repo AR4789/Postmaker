@@ -7,6 +7,27 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+            textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background: #4b5563;
+            /* Tailwind gray-700 */
+            border-radius: 8px;
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            /* Tailwind blue-500 */
+            border-radius: 8px;
+        }
+
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+            /* Tailwind blue-600 */
+        }
+
         .bokeh {
             position: absolute;
             top: 0;
@@ -75,19 +96,22 @@
         <div class="bokeh-circle bokeh-circle-3"></div>
         <div class="bokeh-circle bokeh-circle-4"></div>
 
-    </div>
-    <div class="w-full  text-white p-10 relative z-10 h-screen">
-        <div class="flex justify-end w-full">
-        <a href="/logout" class="bg-red-500 hover:bg-red-700 font-bold py-2 px-4 rounded-md inline-block mb-5">Logout</a>
-        </div>
-        <form action="/update/<%= post._id %>" method="post" class="flex flex-col gap-4 w-full items-center  h-1/2">
-            <h class=" text-3xl font-bold text-black">Edit your Post</h>  
-            <textarea class="p-3 mb-3 outline-none border-2 border-zinc-800 w-3/5 h-1/2 bg-blue-600 resize-none block rounded-lg" placeholder="What's on your mind" name="content"><%= post.content %></textarea>
-            <input type="submit" value="Update Post" class="rounded-md border-2 border-zinc-800 bg-black block px-3 py-2 w-40 ">
-        </form>
-
+        <div class="w-full text-white p-4 sm:p-6 lg:p-10 relative z-10 h-screen">
+            <div class="flex justify-between w-full items-center mb-4">
+                <a href="/profile" class="text-black hover:underline font-bold p-2 inline-block">
+                    &larr; Back
+                </a>
+            </div>
         
-    </div>
+            <form action="/update/<%= post._id %>" method="post" class="flex flex-col gap-4 w-full items-center h-auto sm:h-1/2">
+                <h class="text-3xl font-bold text-black text-center sm:text-4xl">Edit your Post</h>
+                <textarea class="p-3 mb-3 outline-none border-2 border-zinc-800 w-full sm:w-3/5 h-32 sm:h-1/2 bg-blue-500 resize-none block rounded-lg" placeholder="What's on your mind" name="content"><%= post.content %></textarea>
+                <input type="submit" value="Update Post" class="rounded-md border-2 border-blue-700 bg-blue-500 block px-3 py-2 w-40 mx-auto sm:w-auto">
+            </form>
+        </div>
+        
+</div>
+
     
 </body>
 </html>

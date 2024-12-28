@@ -1,4 +1,8 @@
+require('dotenv').config();
+
 const express=require("express");
+const {Configuration, OpenAIApi}= require("openai");
+
 const app=express();
 const userModel=require("./models/user");
 const cookies = require("cookie-parser");
@@ -17,7 +21,6 @@ const multer = require('multer');
 const crypto=require("crypto");
 const axios = require('axios');
 const fs = require('fs');
-require('dotenv').config();
 
 
 
@@ -326,7 +329,7 @@ app.post("/post", isLoggedIn, async (req, res) => {
 
         try {
             let user = await userModel.findOne({ email: req.user.email });
-            let { content } = req.body;
+            let { header,content } = req.body;
 
             // If an image was uploaded, read it as a Base64 string
             let imageBase64 = req.file ? fs.readFileSync(req.file.path, { encoding: 'base64' }) : null;
@@ -334,6 +337,7 @@ app.post("/post", isLoggedIn, async (req, res) => {
             // Create the post with both content and image Base64 string
             let post = await postModel.create({
                 user: user._id,
+                header,
                 content,
                 image: imageBase64 // Save the image as Base64 string in the post
             });
@@ -534,13 +538,13 @@ app.post("/friend-request/:id", isLoggedIn, async (req, res) => {
         if (!recipient.friendRequests.includes(req.user.userid)) {
             recipient.friendRequests.push(req.user.userid);
             await recipient.save();
-            res.redirect("/friends");
+            res.status(200).json({ message: "Friend request sent successfully" });
         } else {
             res.status(400).json({ message: "Friend request already sent" });
         }
     } catch (err) {
         console.error("Error sending friend request:", err);
-        res.status(500).send("Error occurred while sending friend request.");
+        res.status(500).json({ message: "Error occurred while sending friend request." });
     }
 });
 
@@ -660,50 +664,6 @@ app.post('/updatepassword', isLoggedIn, async (req, res) => {
         console.error('Error updating password:', error);
         res.json({ success: false });
     }
-});
-
-
-
-
-app.post('/api/chatgpt', async (req, res) => {
-    const { message } = req.body;
-
-    if (!message) {
-        return res.status(400).json({ error: 'Message is required' });
-    }
-
-    const maxRetries = 5;
-
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-        try {
-            const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-                model: 'gpt-3.5-turbo', // Specify the model
-                messages: [{ role: 'user', content: message }]
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.SECRET_KEY}`, // Replace with your API key
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            // Return the response data
-            return res.json(response.data.choices[0].message);
-        } catch (error) {
-            // Handle rate limit error
-            if (error.response && error.response.status === 429) {
-                const waitTime = Math.pow(2, attempt) * 1000; // Exponential backoff
-                console.log(`Rate limit exceeded. Waiting for ${waitTime} ms before retrying...`);
-                await new Promise(resolve => setTimeout(resolve, waitTime));
-            } else {
-                // Log error and send a response if it's not a 429 error
-                console.error('Error communicating with ChatGPT:', error);
-                return res.status(500).json({ error: 'Error communicating with ChatGPT' });
-            }
-        }
-    }
-
-    // If max retries reached, send an error response
-    return res.status(503).json({ error: 'Service unavailable, please try again later.' });
 });
 
 
