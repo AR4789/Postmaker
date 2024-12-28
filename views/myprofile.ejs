@@ -100,161 +100,155 @@
     </style>
 </head>
 
-<body class="bg-white text-black h-screen w-full">
+<body class=" text-black h-screen w-full">
 
-    <div class="bokeh">
+    <div class="bokeh ">
         <div class="bokeh-circle bokeh-circle-1"></div>
         <div class="bokeh-circle bokeh-circle-2"></div>
         <div class="bokeh-circle bokeh-circle-3"></div>
         <div class="bokeh-circle bokeh-circle-4"></div>
-    <div class="container mx-auto p-5 rounded-lg w-full  h-full">
-        <a href="/profile" class="text-blue-700 hover:underline mb-4 inline-block font-bold">
-            &larr; Back 
-        </a>
-        <div class="bg-blue-200 p-6 rounded-lg shadow-lg w-full h-full">
-            <h1 class="text-3xl font-bold text-black mb-6 text-center">My Profile</h1>
-
-            <!-- Profile Picture Section -->
-            <div class="mb-4 flex flex-col items-center justify-center w-full  gap-2">
-                <div class=" w-24 h-24 rounded-full overflow-hidden border-4 border-yellow-600 mb-2">
-                    <img class="profile-pic w-full h-full" src="data:image/png;base64,<%= user.profilepic %>" alt="Profile Picture" id="profile-pic">
-                </div>
-                <div class="relative w-48 text-center">
-                    <label for="profile-pic-input" class="cursor-pointer bg-yellow-600 mb-4 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition duration-300 ease-in-out">
-                        Upload Profile Picture
-                    </label>
-                    <input type="file" accept="image/*" id="profile-pic-input" class="hidden" />
-                </div>
-                
+        
+        <div class="container mx-auto p-5 sm:p-6 lg:p-10 rounded-lg w-full h-full flex flex-col justify-between items-center">
+            <div class="w-full flex justify-start mb-4">
+                <a href="/profile" class="text-blue-700 hover:underline inline-block font-bold">
+                    &larr; Back 
+                </a>
             </div>
-
-            <!-- Editable Fields Section -->
-            <div class="space-y-6">
-
-                <!-- Name Field -->
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <p class="text-xl font-semibold w-32">
-                            Name:
-                        </p>
-                        <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3" id="editable-name-display">
-                            <%= user.name %>
-                        </span>
-                        <button class="edit-button ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition" id="edit-name-button">
-                            Edit
-                        </button>
+            <div class="bg-blue-400 p-6 rounded-lg shadow-lg w-full sm:w-3/4 h-full flex flex-col">
+                <h1 class="text-3xl sm:text-4xl font-bold text-black mb-6 text-center">My Profile</h1>
+        
+                <!-- Profile Picture Section -->
+                <div class="mb-4 flex flex-col items-center justify-center w-full gap-2">
+                    <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-yellow-600 mb-2">
+                        <img class="profile-pic w-full h-full" src="data:image/png;base64,<%= user.profilepic %>" alt="Profile Picture" id="profile-pic">
                     </div>
-
-                    <!-- Hidden Name Edit Section -->
-                    <div id="name-edit-section" class="hidden space-y-4 mt-4">
-                        <input type="text" id="new-name" class="block w-full border border-gray-300 rounded-md p-2" value="<%= user.name %>" placeholder="New Name" />
-
-                        <div class="flex justify-end space-x-4">
-                            <button id="cancel-name-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
-                                Cancel
-                            </button>
-                            <button id="confirm-name-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
-                                Confirm
+                    <div class="relative w-48 text-center">
+                        <label for="profile-pic-input" class="cursor-pointer bg-yellow-600 mb-4 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition duration-300 ease-in-out">
+                            Upload Profile Picture
+                        </label>
+                        <input type="file" accept="image/*" id="profile-pic-input" class="hidden" />
+                    </div>
+                </div>
+        
+                <!-- Editable Fields Section -->
+                <div class="space-y-6 flex-grow overflow-y-auto">
+        
+                    <!-- Name Field -->
+                    <div class="mb-4">
+                        <div class="flex items-center">
+                            <p class="text-xl sm:text-2xl font-semibold w-32">
+                                Name:
+                            </p>
+                            <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3 sm:w-1/2" id="editable-name-display">
+                                <%= user.name %>
+                            </span>
+                            <button class="edit-button ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition" id="edit-name-button">
+                                Edit
                             </button>
                         </div>
-                    </div>
-                </div>
-
-            
-                <!-- Username Field -->
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <p class="text-xl font-semibold w-32">
-                            Username:
-                        </p>
-                        <span class="editable border border-black text-zinc-500 rounded-md p-2 ml-4 text-gray-700 w-2/3" id="editable-username-display">
-                            <%= user.username %>
-                        </span>
-                        
-                    </div>
-            
-                </div>
-            
-                <!-- Email Field -->
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <p class="text-xl font-semibold w-32">
-                            Email:
-                        </p>
-                        <span class="editable border border-black text-zinc-500 rounded-md p-2 ml-4 text-gray-700 w-2/3" id="editable-email-display">
-                            <%= user.email %>
-                        </span>
-                        
-                    </div>
-            
-                </div>
-            
-                <!-- Password Field (already handled) -->
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <p class="text-xl font-semibold w-32">
-                            Password:
-                        </p>
-                        <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3" id="password-display">
-                            ********
-                        </span>
-                        <button id="edit-password-button" class="ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition">
-                            Edit
-                        </button>
-                    </div>
-            
-                    <!-- Hidden Password Edit Section -->
-                    <div id="password-edit-section" class="hidden space-y-4 mt-4 w-2/3 ml-auto">
-                        <input type="password" id="new-password" class="block w-full border border-gray-300 rounded-md p-2" placeholder="New Password" />
-                        <input type="password" id="retype-new-password" class="block w-full border border-gray-300 rounded-md p-2" placeholder="Retype New Password" />
-            
-                        <div class="flex justify-end space-x-4">
-                            <button id="cancel-password-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
-                                Cancel
-                            </button>
-                            <button id="confirm-password-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
-                                Confirm
-                            </button>
+        
+                        <!-- Hidden Name Edit Section -->
+                        <div id="name-edit-section" class="hidden space-y-4 mt-4">
+                            <input type="text" id="new-name" class="block w-full border border-gray-300 rounded-md p-2" value="<%= user.name %>" placeholder="New Name" />
+        
+                            <div class="flex justify-end space-x-4">
+                                <button id="cancel-name-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
+                                    Cancel
+                                </button>
+                                <button id="confirm-name-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
+                                    Confirm
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            
-                <!-- Age Field -->
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <p class="text-xl font-semibold w-32">
-                            Age:
-                        </p>
-                        <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3" id="editable-age-display">
-                            <%= user.age || 'N/A' %> <!-- Display 'N/A' if age is not set -->
-                        </span>
-                        <button class="edit-button ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition" id="edit-age-button">
-                            Edit
-                        </button>
-                    </div>
-
-                    <!-- Hidden Age Edit Section -->
-                    <div id="age-edit-section" class="hidden space-y-4 mt-4">
-                        <input type="number" id="new-age" class="block w-full border border-gray-300 rounded-md p-2" value="<%= user.age %>" placeholder="New Age" />
-
-                        <div class="flex justify-end space-x-4">
-                            <button id="cancel-age-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
-                                Cancel
-                            </button>
-                            <button id="confirm-age-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
-                                Confirm
-                            </button>
+        
+                    <!-- Username Field -->
+                    <div class="mb-4">
+                        <div class="flex items-center">
+                            <p class="text-xl sm:text-2xl font-semibold w-32">
+                                Username:
+                            </p>
+                            <span class="editable border border-black text-zinc-500 rounded-md p-2 ml-4 text-gray-700 w-2/3 sm:w-1/2" id="editable-username-display">
+                                <%= user.username %>
+                            </span>
                         </div>
                     </div>
+        
+                    <!-- Email Field -->
+                    <div class="mb-4">
+                        <div class="flex items-center">
+                            <p class="text-xl sm:text-2xl font-semibold w-32">
+                                Email:
+                            </p>
+                            <span class="editable border border-black text-zinc-500 rounded-md p-2 ml-4 text-gray-700 w-2/3 sm:w-1/2" id="editable-email-display">
+                                <%= user.email %>
+                            </span>
+                        </div>
+                    </div>
+        
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <div class="flex items-center">
+                            <p class="text-xl sm:text-2xl font-semibold w-32">
+                                Password:
+                            </p>
+                            <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3 sm:w-1/2" id="password-display">
+                                ********
+                            </span>
+                            <button id="edit-password-button" class="ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition">
+                                Edit
+                            </button>
+                        </div>
+        
+                        <!-- Hidden Password Edit Section -->
+                        <div id="password-edit-section" class="hidden space-y-4 mt-4 w-2/3 ml-auto">
+                            <input type="password" id="new-password" class="block w-full border border-gray-300 rounded-md p-2" placeholder="New Password" />
+                            <input type="password" id="retype-new-password" class="block w-full border border-gray-300 rounded-md p-2" placeholder="Retype New Password" />
+        
+                            <div class="flex justify-end space-x-4">
+                                <button id="cancel-password-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
+                                    Cancel
+                                </button>
+                                <button id="confirm-password-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- Age Field -->
+                    <div class="mb-4">
+                        <div class="flex items-center">
+                            <p class="text-xl sm:text-2xl font-semibold w-32">
+                                Age:
+                            </p>
+                            <span class="editable border border-black rounded-md p-2 ml-4 text-gray-700 w-2/3 sm:w-1/2" id="editable-age-display">
+                                <%= user.age || 'N/A' %> <!-- Display 'N/A' if age is not set -->
+                            </span>
+                            <button class="edit-button ml-4 bg-yellow-500 text-white rounded-md px-4 py-2 border border-yellow-500 hover:bg-yellow-600 transition" id="edit-age-button">
+                                Edit
+                            </button>
+                        </div>
+        
+                        <!-- Hidden Age Edit Section -->
+                        <div id="age-edit-section" class="hidden space-y-4 mt-4">
+                            <input type="number" id="new-age" class="block w-full border border-gray-300 rounded-md p-2" value="<%= user.age %>" placeholder="New Age" />
+        
+                            <div class="flex justify-end space-x-4">
+                                <button id="cancel-age-edit" class="bg-gray-500 text-white rounded-md px-4 py-2 border border-gray-500 hover:bg-gray-600 transition">
+                                    Cancel
+                                </button>
+                                <button id="confirm-age-edit" class="bg-green-500 text-white rounded-md px-4 py-2 border border-green-500 hover:bg-green-600 transition">
+                                    Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+        
                 </div>
-
-            
             </div>
-            
-            
-            
         </div>
-    </div>
+        
     </div>
 
     <!-- External Script for Inline Editing -->

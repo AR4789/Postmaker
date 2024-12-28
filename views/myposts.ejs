@@ -8,6 +8,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js" integrity="sha512-... (integrity value)" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
+
+        .myscroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .myscroll::-webkit-scrollbar-track {
+            background: #4b5563;
+            /* Tailwind gray-700 */
+            border-radius: 8px;
+        }
+
+        .myscroll::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            /* Tailwind blue-500 */
+            border-radius: 8px;
+        }
+
+        .myscroll::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+            /* Tailwind blue-600 */
+        }
+
+        .mycolour {
+            background-color: #1a1d1c;
+        }
+
         .post:hover {
             transform: translateY(-4px);
             transition: transform 0.2s ease-in-out;
@@ -26,67 +52,136 @@
             word-break: break-all;
             white-space: normal;
         }
+
+        .bokeh {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to bottom, #3b89f6, #4aa1f3, #3b82f6);
+            background-size: 100% 300px;
+            background-position: 0% 100%;
+        }
+
+        .bokeh-circle {
+            position: absolute;
+            border-radius: 50%;
+            background-color: #ffffff;
+            opacity: 0.2;
+            animation: bokehAnimation 10s infinite;
+        }
+
+        .bokeh-circle-1 {
+            top: 20%;
+            left: 30%;
+            width: 100px;
+            height: 100px;
+        }
+
+        .bokeh-circle-2 {
+            top: 50%;
+            left: 50%;
+            width: 150px;
+            height: 150px;
+        }
+
+        .bokeh-circle-3 {
+            top: 70%;
+            left: 20%;
+            width: 200px;
+            height: 200px;
+        }
+
+        .bokeh-circle-4 {
+            top: 10%;
+            left: 70%;
+            width: 125px;
+            height: 125px;
+        }
+
+        @keyframes bokehAnimation {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 </head>
 
-<body class="bg-white text-black min-h-screen">
-    <div class="container mx-auto p-10">
-        <a href="/profile" class="text-blue-600 font-bold hover:underline mb-4 inline-block">
-            &larr; Back
-        </a>
-        <!-- Page Title -->
-        <h1 class="text-3xl font-bold text-black mb-8 text-center">My Posts</h1>
+<body class=" bokeh text-black min-h-screen bg-fixed">
+    <div >
+        <div class="bokeh-circle bokeh-circle-1"></div>
+        <div class="bokeh-circle bokeh-circle-2"></div>
+        <div class="bokeh-circle bokeh-circle-3"></div>
+        <div class="bokeh-circle bokeh-circle-4"></div>
 
-        <!-- User Posts Section -->
-        <div class="posts h-full flex justify-center items-center">
+        <div class="container mx-auto p-10">
+            <a href="/profile" class="text-blue-600 font-bold hover:underline mb-4 inline-block">
+                &larr; Back
+            </a>
+            <!-- Page Title -->
+            <h1 class="text-3xl font-bold text-black mb-8 text-center">My Posts</h1>
 
-            <div class="postcontainer grid grid-cols-2 gap-20">
-                <% if (user.posts.length > 0) { %>
-                    <% user.posts.reverse().forEach(function(post) { %>
-                        <div class="post w-[600px]  bg-black border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
-                            <h4 class="text-blue-400 font-bold mb-3">@<%= user.username %></h4>
+            <!-- User Posts Section -->
+            <div class="posts flex justify-center items-start">
 
-                            <% if (post.image) { %>
-                                <div class="h-[400px] mb-3 w-[400px] mx-auto border rounded-md border-zinc-400 mycolour">
-                                    <img src="data:image/png;base64,<%= post.image %>" alt="Post Image" class="h-full w-full rounded-lg">
-                                </div>
-                            <% } %>
-
-
-                            <div class=" pl-2 h-full ">                              
-                                <div class="h-[200px] overflow-y-auto border rounded-md border-zinc-400 p-2 mycolour">
-                                <p class=" font-bold text-white tracking-tight leading-snug"><%= post.content %></p>
-                                </div>                            
-                                <!-- Display Post Creation Date -->
-                                <small class="text-sm text-gray-300 mb-2 block">Posted on: <%= post.date ? post.date.toLocaleString() : 'Date not available' %></small>
-
-                                <!-- Like Count -->
-                                <small id="like-count" class="block text-sm text-green-400 mb-2">Likes: <%= post.likes.length %></small>
-
-                                <!-- Buttons -->
-                                <div class="btns flex items-center gap-6 mt-4">
-                                    <!-- Like Button -->
-                                    <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
-                                        <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-green <% } else { %> icon-white <% } %>"></i>
-                                    </a>
-
-                                    <!-- Edit Button -->
-                                    <a href="/edit/<%= post._id %>" class="text-yellow-400 hover:text-yellow-500 font-semibold flex items-center">
-                                        <i class="fa-solid fa-pencil-alt mr-2"></i> Edit
-                                    </a>
-
-                                    <!-- Delete Button -->
-                                    <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
-                                        <i class="fa-solid fa-trash-alt"></i>
-                                    </a>
+                <div class="postcontainer grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" style="grid-auto-rows: auto;">
+                    <% if (user.posts.length > 0) { %>
+                        <% user.posts.reverse().forEach(function(post) { %>
+                            <div class="post bg-blue-400 border border-zinc-700 rounded-lg p-6 shadow-lg transition-all duration-200 relative">
+                                <h4 class="text-red-600 font-bold mb-3">@<%= user.username %></h4>
+                
+                                <div class="pl-2 flex flex-col gap-2">
+                                    <div class="max-h-[110px] overflow-y-auto border rounded-md border-zinc-400 p-2 mycolour">
+                                        <p class="font-bold text-white tracking-tight leading-snug"><%= post.header %></p>
+                                    </div>
+                
+                                    <% if (post.image) { %>
+                                        <div class="h-[300px] mb-3 w-full md:w-[300px] mx-auto border rounded-md border-zinc-400 mycolour">
+                                            <img src="data:image/png;base64,<%= post.image %>" alt="Post Image" class="h-full w-full rounded-lg">
+                                        </div>
+                                    <% } %>
+                
+                                    <div class="max-h-[200px] overflow-y-auto border rounded-md border-zinc-400 p-2 mycolour myscroll">
+                                        <p class="tracking-tight text-white leading-snug"><%= post.content %></p>
+                                    </div>
+                                    <!-- Display Post Creation Date -->
+                                    <small class="text-sm text-gray-200 mb-2 block">Posted on: <%= post.date ? post.date.toLocaleString() : 'Date not available' %></small>
+                
+                                    <!-- Like Count -->
+                                    <small id="like-count" class="font-bold block text-sm text-green-400 mb-2">Likes: <%= post.likes.length %></small>
+                
+                                    <!-- Buttons -->
+                                    <div class="btns flex flex-wrap items-center gap-6 ">
+                                        <!-- Like Button -->
+                                        <a href="#" class="flex items-center like-button" data-post-id="<%= post._id %>">
+                                            <i class="fa-solid fa-thumbs-up text-2xl <% if (post.likes.indexOf(user._id) !== -1) { %> icon-green <% } else { %> icon-white <% } %>"></i>
+                                        </a>
+                
+                                        <!-- Edit Button -->
+                                        <a href="/edit/<%= post._id %>" class="text-yellow-400 hover:text-yellow-500 font-semibold flex items-center">
+                                            <i class="fa-solid fa-pencil-alt "></i> Edit
+                                        </a>
+                
+                                        <!-- Delete Button -->
+                                        <a href="#" data-post-id="<%= post._id %>" class="delete-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                            <i class="fa-solid fa-trash-alt"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <p class="text-lg text-gray-400">You haven't created any posts yet.</p>
-                <% } %>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="text-lg text-gray-400">You haven't created any posts yet.</p>
+                    <% } %>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -94,5 +189,7 @@
     <!-- Include external JavaScript files for handling likes and delete functionality -->
     <script src="/javascripts/profile.js"></script>
 </body>
+
+
 
 </html>
