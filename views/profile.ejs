@@ -292,17 +292,15 @@
                         <h1 class="text-3xl text-center text-black font-bold">Friends</h1>
                         <div class="w-full h-full grid grid-cols-1 gap-6 mt-5 flex justify-center">
                             <% user.friends.forEach(function(friend) { %>
-                                <% const friendMessage=user.messages.find(msg=> msg.friendId.toString() ===
-                                    friend._id.toString()); %>
-                                    <div
-                                        class="friend-card w-full h-[100px] bg-black rounded-lg p-2 shadow-lg transition-all duration-200 relative">
+                                <% if (user.messages && friend && friend._id) { %>
+                                    <% const friendMessage = user.messages.find(msg => 
+                                        msg.friendId && msg.friendId.toString() === friend._id.toString()
+                                    ); %>
+                                    <div class="friend-card w-full h-[100px] bg-black rounded-lg p-2 shadow-lg transition-all duration-200 relative">
                                         <a href="/chat/<%= friend._id %>" class="block h-full w-full">
                                             <div class="flex items-center gap-4 mb-4">
-                                                <div
-                                                    class="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500">
-                                                    <img class="profile-pic w-full h-full"
-                                                        src="data:image/png;base64,<%= friend.profilepic %>"
-                                                        alt="Profile Picture">
+                                                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-500">
+                                                    <img class="profile-pic w-full h-full" src="data:image/png;base64,<%= friend.profilepic %>" alt="Profile Picture">
                                                 </div>
                                                 <h2 class="text-blue-400 font-bold">
                                                     <%= friend.name %>
@@ -313,20 +311,18 @@
                                                     <small>
                                                         <%= friendMessage.lastMessage %>
                                                     </small>
-                                                    <span class="text-red-500 font-bold">(<%= friendMessage.unseenCount
-                                                            %>)</span>
+                                                    <span class="text-red-500 font-bold">(<%= friendMessage.unseenCount %>)</span>
                                                 </div>
-                                                <% } %>
+                                            <% } %>
                                         </a>
                                         <div class="btns flex items-center gap-6 mt-4">
-                                            <!-- Delete Button -->
-                                            <a href="#" data-friend-id="<%= friend._id %>"
-                                                class="delete-friend-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
+                                            <a href="#" data-friend-id="<%= friend._id %>" class="delete-friend-button text-red-500 hover:text-red-300 font-semibold flex items-center absolute top-3 right-3">
                                                 <i class="fa-solid fa-trash-alt"></i>
                                             </a>
                                         </div>
                                     </div>
-                                    <% }) %>
+                                <% } %>
+                            <% }) %>
                         </div>
                     </div>
             </div>

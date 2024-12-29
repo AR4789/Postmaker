@@ -46,102 +46,109 @@ app.use((req, res, next) => {
 
 
 
- // In your server-side code
+ //In your server-side code
  io.on('connection', (socket) => {
     console.log('Client connected');
 
+    // Listen for room joining
     socket.on('join', async (roomId) => {
-        socket.join(roomId);
-        console.log('User  joined room:', roomId);
-
-        // Send the current messages to the client
         try {
-            const friendId = socket.handshake.query.friendId;
-            const friend = await userModel.findById(socket.handshake.query.friendId);
+            socket.join(roomId);
+            console.log(`User joined room: ${roomId}`);
 
-            let userid;
-            if(data.room.split('-')[0]===friendId)
-            userid=data.room.split('-')[1];
-            else 
-            userid=data.room.split('-')[0];
+            const friendId = socket.handshake.query.friendId;
+            const friend = await userModel.findById(friendId);
+
+            let userId;
+            if (roomId.split('-')[0] === friendId) {
+                userId = roomId.split('-')[1];
+            } else {
+                userId = roomId.split('-')[0];
+            }
 
             if (friend) {
-                const messages = friend.messages?.filter(msg => msg.friendId.toString() === userid);
-                socket.emit('messages', messages);
+                const messages = friend.messages?.filter(msg => 
+                    msg.friendId && msg.friendId.toString() === userId
+                );
+                socket.emit('messages', messages || []);
             } else {
                 console.log('Friend not found');
                 socket.emit('messages', []);
-            }        } catch (err) {
-            console.error(err);
+            }
+        } catch (err) {
+            console.error('Error joining room:', err);
         }
     });
 
-
-    // Handle incoming messages
+    // Listen for incoming messages
     socket.on('message', async (data) => {
         console.log(`Received message: ${data.message}`);
+        const { roomId, sender, message } = data;
 
-        // Update the database with the new message
         try {
             const friendId = socket.handshake.query.friendId;
             const friend = await userModel.findById(friendId);
 
             let userId;
-            if(data.room.split('-')[0]===friendId)
-            userId=data.room.split('-')[1];
-            else 
-            userId=data.room.split('-')[0];
-
-
-            const messageIndex = friend.messages.findIndex(msg => msg.friendId.toString() === userId);
-            if (messageIndex === -1) {
-                // Add a new message object if it doesn't exist
-                friend.messages.push({
-                    friendId: data.room.split('-')[1],
-                    lastMessage: data.message,
-                    timestamp: new Date(),
-                    unseenCount: 1
-                });
+            if (roomId.split('-')[0] === friendId) {
+                userId = roomId.split('-')[1];
             } else {
-                // Update the existing message object
-                friend.messages[messageIndex].lastMessage = data.message;
-                friend.messages[messageIndex].timestamp = new Date();
-                friend.messages[messageIndex].unseenCount++;
+                userId = roomId.split('-')[0];
             }
-            await friend.save();
 
-            // Update the sender's messages
-            const sender = await userModel.findById(userId);
-            const messageIndexSender = sender.messages.findIndex(msg => msg.friendId.toString() === socket.handshake.query.friendId);
+            // Update the friend's message data
+            if (friend) {
+                const messageIndex = friend.messages.findIndex(msg => 
+                    msg.friendId && msg.friendId.toString() === userId
+                );
+                if (messageIndex === -1) {
+                    friend.messages.push({
+                        friendId: userId,
+                        lastMessage: message,
+                        timestamp: new Date(),
+                        unseenCount: 1
+                    });
+                } else {
+                    friend.messages[messageIndex].lastMessage = message;
+                    friend.messages[messageIndex].timestamp = new Date();
+                    friend.messages[messageIndex].unseenCount++;
+                }
+                await friend.save();
+            }
+
+            // Update the sender's message data
+            const senderUser = await userModel.findById(userId);
+            const messageIndexSender = senderUser.messages.findIndex(msg => 
+                msg.friendId && msg.friendId.toString() === friendId
+            );
             if (messageIndexSender === -1) {
-                // Add a new message object if it doesn't exist
-                sender.messages.push({
-                    friendId: data.room.split('-')[0],
-                    lastMessage: data.message,
+                senderUser.messages.push({
+                    friendId: friendId,
+                    lastMessage: message,
                     timestamp: new Date(),
                     unseenCount: 0
                 });
             } else {
-                // Update the existing message object
-                sender.messages[messageIndexSender].lastMessage = data.message;
-                sender.messages[messageIndexSender].timestamp = new Date();
-                sender.messages[messageIndexSender].unseenCount = 0;
+                senderUser.messages[messageIndexSender].lastMessage = message;
+                senderUser.messages[messageIndexSender].timestamp = new Date();
+                senderUser.messages[messageIndexSender].unseenCount = 0;
             }
-            await sender.save();
+            await senderUser.save();
 
-            // Emit the new message to all connected clients in the same room
-            io.to(data.room).emit('message', { sender: data.sender, content: data.message });
+            // Broadcast the new message to all connected clients in the room
+            io.to(roomId).emit('message', { sender, content: message });
         } catch (err) {
-            console.error(err);
+            console.error('Error handling message:', err);
         }
     });
 
-
-    // Handle disconnections
+    // Handle client disconnection
     socket.on('disconnect', () => {
         console.log('Client disconnected');
     });
 });
+
+
 
 
 
@@ -632,6 +639,8 @@ app.get('/chat/:friendId', isLoggedIn, async (req, res) => {
     const friendId = req.params.friendId;
     const user = await userModel.findById(req.user.userid);
     const friend = await userModel.findById(friendId);
+    const serverURL= process.env.SERVER_URL || "http://localhost:3000";
+
 
     // Fetch messages between the logged-in user and the friend
     const messages = await chatModel.find({
@@ -641,7 +650,7 @@ app.get('/chat/:friendId', isLoggedIn, async (req, res) => {
         ]       
     }).populate('sender receiver'); // Populate the sender and receiver fields
 
-    res.render('chat', { messages, user, friend });
+    res.render('chat', { messages, user, friend,serverURL });
 });
 
 

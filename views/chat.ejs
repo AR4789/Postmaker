@@ -132,36 +132,40 @@
 
     <script>
 // Client-side code
-const socket = io('http://localhost:3000', {
+const socket = io('<%= serverURL %>', {
   query: {
     friendId: '<%= friend._id %>' // Replace with the actual friendId
   }
 });
 
+// Define roomId once
+const userId = '<%= user._id %>'; // Ensure these values are passed from the server
+const userName = '<%= user.name %>';
+const friendId = '<%= friend._id %>';
+const roomId = [friendId, userId].sort().join('-');
 
-        // Handle incoming messages
-        socket.on('message', (message) => {
-            console.log('Received message');
-            const chatBox = document.querySelector('.chat-box');
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', 'mb-2');
-            messageElement.innerHTML = `<strong>${message.sender}:</strong> <span>${message.content}</span>`;
-            chatBox.appendChild(messageElement);
-            chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom of the chat box
-        });
+// Join the room on page load
+socket.emit('join', roomId);
 
-        // Send a message to the server
-        document.querySelector('.message-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const message = document.querySelector('input[name="message"]').value;
-            const friendId = document.querySelector('input[name="friendId"]').value;
-            const userId = '<%= user._id %>'; // Get the user's ID from the server-side code
-            const userName = '<%= user.name %>'; // Get the user's name from the server-side code
-            const roomId = [friendId, userId].sort().join('-');
-            socket.emit('join', roomId); // Join the room
-            socket.emit('message', { message, sender: userName, room: roomId });
-            document.querySelector('input[name="message"]').value = ''; // Clear the input field
-        });
+// Handle incoming messages
+socket.on('message', (message) => {
+    console.log('Received message:', message);
+    const chatBox = document.querySelector('.chat-box');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', 'mb-2');
+    messageElement.innerHTML = `<strong>${message.sender}:</strong> <span>${message.content}</span>`;
+    chatBox.appendChild(messageElement);
+    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom of the chat box
+});
+
+// Send a message to the server
+document.querySelector('.message-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const message = document.querySelector('input[name="message"]').value;
+    socket.emit('message', { message, sender: userName, roomId });
+    document.querySelector('input[name="message"]').value = ''; // Clear the input field
+});
+
     </script>
 </body>
 </html>
